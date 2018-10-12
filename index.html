@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final</title>
+    <link rel="stylesheet" href="lib/bootstrap-4.1.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="lib/datepicker/datepicker.min.css">
+    <script defer src="lib/fontawesome-free-5.0.12/svg-with-js/js/fontawesome-all.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-dark navbar-expand-lg bg-dark fixed-top">
+    <a class="navbar-brand" href="#">
+        <img src="logo.png" width="30" height="30" alt="">
+        Melbourne Pedestrian Sensors
+    </a>
+    <button class="navbar-toggler no-outline" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <!--<div class="collapse navbar-collapse my-1" id="navbarToggler">-->
+        <!--<ul class="navbar-nav mr-auto mt-2 mt-lg-0">-->
+            <!--<li class="nav-item active">-->
+                <!--<a class="nav-link" href="#" data-toggle="modal" data-target="#contentModal">-->
+                    <!--Show text-->
+                <!--</a>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+</nav>
+<div class="overlay" id="page-overlay">
+    <div class="overlay-item">
+        <h1 class="no-user-select">Preparing Visualisations</h1>
+        <span class="spinner"></span>
+    </div>
+</div>
+<div class="container-fluid position-relative" style="padding-top: 64px">
+    <div class="overlay loading hide" id="loadingOverlay">
+        <div class="overlay-item">
+            <span class="spinner"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 col-md-6 text-center">
+            <div id="mapContainer" class="position-relative">
+                <div class="ui-widget position-absolute">
+                    <div class="d-flex align-content-center">
+                        <input id="selectedDate" class="mr-auto datepicker-input" data-toggle="datepicker" readonly>
+                        <div class="mr-1">
+                            <button id="calendarPopover" class="icon-btn">
+                                <i class="far fa-calendar-alt"></i>
+                            </button>
+                        </div>
+                        <span id="backBtn" class="pointer">&lt;</span>&nbsp;<span id="nextBtn" class="pointer">&gt;</span>
+                    </div>
+                    <div class="text-left"><span id="selectedHour">None</span></div>
+                    <div class="d-flex align-items-center mt-2">
+                        <div class="play pointer mr-2" id="animationBtn"></div>
+                        <input class="slider flex-grow-1" id="hourInput" type="range" min="0" max="23" step="1">
+                    </div>
+                    <div class="text-left">
+                        <button class="icon-btn collapse-toggle px-0 collapsed text-left" type="button" data-toggle="collapse" data-target="#widgetCollapse" aria-expanded="false" aria-controls="widgetCollapse">
+                            show
+                        </button>
+                    </div>
+                    <div class="collapse" id="widgetCollapse">
+                        <div class="d-flex align-items-center">
+                            <svg width="24px" height="24px">
+                                <circle r="5" cx="12" cy="12" class="sensor-legend"></circle>
+                            </svg>
+                            <span>Operative Sensor</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <svg width="24px" height="24px">
+                                <circle r="5" cx="12" cy="12" class="no-reading-legend"></circle>
+                            </svg>
+                            <span>Sensor, inactive this hour</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <svg width="24px" height="24px">
+                                <circle r="5" cx="12" cy="12" class="inactive-legend"></circle>
+                            </svg>
+                            <span>Sensor, inactive this day</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <svg width="24px" height="24px">
+                                <circle r="10" cx="12" cy="12" class="volume-legend"></circle>
+                                <circle r="2" cx="12" cy="12" class="sensor-legend"></circle>
+                            </svg>
+                            <span>Sensor volume in relation to the hourly total</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="switch-label">Show choropleth</span>
+                            <label class="switch">
+                                <input type="checkbox" id="mapToggle">
+                                <span class="toggle-slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <h4 class="mt-2">Suburb</h4>
+            <p id="suburbSelection">None - click suburbs to se more</p>
+            <h4>Sensor at <span id="sensorDescription">None</span></h4>
+            <p>ID: <span id="sensorId">None</span>, Name: <span id="sensorName">None</span>, installed in <span id="sensorYearInstalled">none</span></p>
+            <div class="d-flex align-items-center">
+                <i class="fa fa-users fa-2x"></i>
+                &nbsp;<span id="countCurrentHour">0</span>
+                &nbsp;pedestrians counted this hour
+            </div>
+            <div class="mt-2" id="lineChartContainer"></div>
+            <div class="no-user-select">
+                <div id="countsLegend">
+                    <svg width="24px" height="24px">
+                        <line class="counts-legend" x1="1" x2="18" y1="18" y2="18"></line>
+                    </svg>
+                    Hourly total:
+                    <span class="float-right" id="count">0</span></div>
+                <div id="aveLegend">
+                    <svg width="24px" height="24px">
+                        <line class="ave-legend" x1="1" x2="18" y1="18" y2="18"></line>
+                    </svg>
+                    4 week average:
+                    <span class="float-right" id="ave">0</span></div>
+                <div id="ave52Legend">
+                    <svg width="24px" height="24px">
+                        <line class="ave52-legend" x1="1" x2="18" y1="18" y2="18"></line>
+                    </svg>
+                    52 week average:
+                    <span class="float-right" id="ave52">0</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Content Modal -->
+<div class="modal modal-fullscreen" id="contentModal" data-backdrop="false" tabindex="-1" role="dialog" aria-labelledby="contentModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <span class="modal-close" aria-hidden="true" data-dismiss="modal" aria-label="Close">&times;</span>
+            <div class="container mt-3">
+                <h2 class="modal-title" >Download links</h2>
+
+                <ul class="link-list downloads">
+                    <li>
+                        <a target="_blank" href="https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp">See Sensor Volume Data</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://compedapi.herokuapp.com/api/bydate/14-05-2018">See Sensor Data API</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="data/population_data.json">See Melbourne Population Data</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="http://www.censusdata.abs.gov.au/census_services/getproduct/census/2016/quickstat/SSC21629">Official Population Statistics</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="data/sensorMappings.json">See Mapping Between Sensors and API Data</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://github.com/JacobBundgaardKnudsen/DataVis/blob/master/Data%20visualization.ipynb">See Data Analysis and Preparation</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="http://www.melbourne.vic.gov.au/SiteCollectionDocuments/demographic-profile-workers-2013.pdf">See Melbourne Demographic Profile</a>
+                    </li>
+                    <li>
+                        <a href="http://www.pedestrian.melbourne.vic.gov.au/data/sensors.csv">Download Sensor Locations Data</a>
+                    </li>
+                    <li>
+                        <a href="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_display_type=dailyZippedDataFile&p_stn_num=086232&p_c=-1487210836&p_nccObsCode=136&p_startYear=2017">Download Rainfall Dataset</a>
+                    </li>
+                    <li>
+                        <a href="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_display_type=dailyZippedDataFile&p_stn_num=086038&p_c=-1480523871&p_nccObsCode=122&p_startYear=2018">Download Temperature Dataset</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="lib/jquery-3.3.1.slim.min.js"></script>
+<script src="lib/popper.min.js"></script>
+<script src="lib/bootstrap-4.1.0-dist/js/bootstrap.min.js"></script>
+<script src="lib/datepicker/datepicker.min.js"></script>
+<script src="lib/d3/d3.min.js"></script>
+<script src="lib/d3-scale-chromatic.min.js"></script>
+<script src="lib/moment.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

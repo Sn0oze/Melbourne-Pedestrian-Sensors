@@ -1,0 +1,52 @@
+{
+  "13":{
+    "name": "Carlton",
+    "total": 18535,
+    "density": 10300
+  },
+  "14":{
+    "name": "Parkville",
+    "total": 7409,
+    "density": 1850
+  },
+  "35":{
+    "name": "North Melbourne",
+    "total": 11755,
+    "density": 4900
+  },
+  "78":{
+    "name": "West Melbourne",
+    "total": 5515,
+    "density": 862
+  },
+  "15":{
+    "name": "Melbourne (3000)",
+    "total": 23642,
+    "density": 7630
+  },
+  "122":{
+    "name": "Melbourne (3004)",
+    "total": 23642,
+    "density": 7630
+  },
+  "48":{
+    "name": "Southbank",
+    "total": 11235,
+    "density": 6610
+  },
+  "59":{
+    "name": "South Wharf",
+    "total": 66,
+    "density": 264
+  },
+  "64":{
+    "name": "Docklands",
+    "total": 10964,
+    "density": 3700
+  },
+  "29":{
+    "name": "East Melbourne",
+    "total": 4964,
+    "density": 2610
+  }
+}
