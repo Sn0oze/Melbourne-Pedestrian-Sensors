@@ -5,28 +5,57 @@
     <title>Final</title>
     <link rel="stylesheet" href="lib/bootstrap-4.1.0-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toggle.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="lib/datepicker/datepicker.min.css">
-    <script defer src="lib/fontawesome-free-5.0.12/svg-with-js/js/fontawesome-all.min.js"></script>
+    <link rel="stylesheet" href="lib/material-design-icons/css/material-icons.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 </head>
 <body>
-<nav class="navbar navbar-dark navbar-expand-lg bg-dark fixed-top">
+<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm">
     <a class="navbar-brand" href="#">
-        <img src="logo.png" width="30" height="30" alt="">
+        <img src="logo-light.png" width="30" height="30" alt="">
         Melbourne Pedestrian Sensors
     </a>
     <button class="navbar-toggler no-outline" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <!--<div class="collapse navbar-collapse my-1" id="navbarToggler">-->
-        <!--<ul class="navbar-nav mr-auto mt-2 mt-lg-0">-->
-            <!--<li class="nav-item active">-->
-                <!--<a class="nav-link" href="#" data-toggle="modal" data-target="#contentModal">-->
-                    <!--Show text-->
-                <!--</a>-->
-            <!--</li>-->
-        <!--</ul>-->
-    <!--</div>-->
+    <div class="collapse navbar-collapse" id="navbarToggler">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a tabindex="0"
+                   class="nav-link pointer"
+                   data-placement="bottom"
+                   data-toggle="popover"
+                   data-container="body"
+                   data-animation="true"
+                   data-template='<div class="popover bg-dark" role="tooltip"><div class="arrow"></div><h3 class="popover-header bg-dark text-light"></h3><div class="popover-body text-light"></div></div>'
+                   data-content="This visualization show the hourly readings of Melbourne's pedestrian sensor network in the inner city">
+                    about
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://github.com/Sn0oze/Melbourne-Pedestrian-Sensors" target="_blank">
+                    <i class="fab fa-github mdi-lg"></i>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="mdi mdi-settings mdi-lg"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right bg-dark px-2" aria-labelledby="navbarDropdownMenuLink" onclick=" event.stopPropagation();">
+                    <span class="text-light">Change theme</span>
+                    <span class="d-flex align-items-center justify-content-between mt-2">
+                        <span class="switch-label text-light"><i class="mdi mdi-brightness-4 mdi-lg"></i></span>
+                         <label class="switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider round"></span>
+                         </label>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </div>
 </nav>
 <div class="overlay" id="page-overlay">
     <div class="overlay-item">
@@ -34,14 +63,14 @@
         <span class="spinner"></span>
     </div>
 </div>
-<div class="container-fluid position-relative" style="padding-top: 64px">
+<div class="container-fluid position-relative" style="padding-top: 59px">
     <div class="overlay loading hide" id="loadingOverlay">
         <div class="overlay-item">
             <span class="spinner"></span>
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-8 col-md-6 text-center">
+        <div class="col-lg-8 col-md-6 text-center pl-0">
             <div id="mapContainer" class="position-relative">
                 <div class="ui-widget position-absolute">
                     <div class="d-flex align-content-center">
@@ -56,7 +85,7 @@
                     <div class="text-left"><span id="selectedHour">None</span></div>
                     <div class="d-flex align-items-center mt-2">
                         <div class="play pointer mr-2" id="animationBtn"></div>
-                        <input class="slider flex-grow-1" id="hourInput" type="range" min="0" max="23" step="1">
+                        <input class="range-slider flex-grow-1" id="hourInput" type="range" min="0" max="23" step="1">
                     </div>
                     <div class="text-left">
                         <button class="icon-btn collapse-toggle px-0 collapsed text-left" type="button" data-toggle="collapse" data-target="#widgetCollapse" aria-expanded="false" aria-controls="widgetCollapse">
@@ -89,11 +118,11 @@
                             </svg>
                             <span>Sensor volume in relation to the hourly total</span>
                         </div>
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center justify-content-between">
                             <span class="switch-label">Show choropleth</span>
                             <label class="switch">
                                 <input type="checkbox" id="mapToggle">
-                                <span class="toggle-slider round"></span>
+                                <span class="slider round"></span>
                             </label>
                         </div>
                     </div>
@@ -135,54 +164,10 @@
     </div>
 </div>
 
-<!--Content Modal -->
-<div class="modal modal-fullscreen" id="contentModal" data-backdrop="false" tabindex="-1" role="dialog" aria-labelledby="contentModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <span class="modal-close" aria-hidden="true" data-dismiss="modal" aria-label="Close">&times;</span>
-            <div class="container mt-3">
-                <h2 class="modal-title" >Download links</h2>
-
-                <ul class="link-list downloads">
-                    <li>
-                        <a target="_blank" href="https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp">See Sensor Volume Data</a>
-                    </li>
-                    <li>
-                        <a target="_blank" href="https://compedapi.herokuapp.com/api/bydate/14-05-2018">See Sensor Data API</a>
-                    </li>
-                    <li>
-                        <a target="_blank" href="data/population_data.json">See Melbourne Population Data</a>
-                    </li>
-                    <li>
-                        <a target="_blank" href="http://www.censusdata.abs.gov.au/census_services/getproduct/census/2016/quickstat/SSC21629">Official Population Statistics</a>
-                    </li>
-                    <li>
-                        <a target="_blank" href="data/sensorMappings.json">See Mapping Between Sensors and API Data</a>
-                    </li>
-                    <li>
-                        <a target="_blank" href="https://github.com/JacobBundgaardKnudsen/DataVis/blob/master/Data%20visualization.ipynb">See Data Analysis and Preparation</a>
-                    </li>
-                    <li>
-                        <a target="_blank" href="http://www.melbourne.vic.gov.au/SiteCollectionDocuments/demographic-profile-workers-2013.pdf">See Melbourne Demographic Profile</a>
-                    </li>
-                    <li>
-                        <a href="http://www.pedestrian.melbourne.vic.gov.au/data/sensors.csv">Download Sensor Locations Data</a>
-                    </li>
-                    <li>
-                        <a href="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_display_type=dailyZippedDataFile&p_stn_num=086232&p_c=-1487210836&p_nccObsCode=136&p_startYear=2017">Download Rainfall Dataset</a>
-                    </li>
-                    <li>
-                        <a href="http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_display_type=dailyZippedDataFile&p_stn_num=086038&p_c=-1480523871&p_nccObsCode=122&p_startYear=2018">Download Temperature Dataset</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="lib/jquery-3.3.1.slim.min.js"></script>
 <script src="lib/popper.min.js"></script>
 <script src="lib/bootstrap-4.1.0-dist/js/bootstrap.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.4.1/js/all.js" integrity="sha384-L469/ELG4Bg9sDQbl0hvjMq8pOcqFgkSpwhwnslzvVVGpDjYJ6wJJyYjvG3u8XW7" crossorigin="anonymous"></script>
 <script src="lib/datepicker/datepicker.min.js"></script>
 <script src="lib/d3/d3.min.js"></script>
 <script src="lib/d3-scale-chromatic.min.js"></script>
