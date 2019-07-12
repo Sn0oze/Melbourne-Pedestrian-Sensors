@@ -68,6 +68,7 @@
 
     const totalPopulationCount = 117728;
     let selectedSensor = {};
+    let oldSuburb = "";
     let totalObservationsPerHour = [];
 
     //Load in GeoJSON data
@@ -75,8 +76,11 @@
     const proxyURL = "https://mps-proxy.herokuapp.com/";
     const sensorDataURL = "https://compedapi.herokuapp.com/api/bydate/";
 
+    const mapColor = "white";
+    const keyCodes = {"space":32};
+
     d3.queue()
-        .defer(d3.json, "data/melbourne_filtered.geojson")
+        .defer(d3.json, "data/melbourne.geojson")
         .defer(d3.csv, "data/sensor_locations_fallback.csv", rowConverter)
         .defer(d3.json, proxyURL + sensorDataURL + formatDate(currentDate))
         .defer(d3.json, "data/sensorMappings.json")
@@ -95,18 +99,36 @@
                 totalObservationsPerHour = calcHourlyTotal(sensorReadings);
                 sensorMappings = sensorDict;
                 // init map
-                map = new suburbMap("#mapContainer", 1, cityOutlines, sensorLocations, sensorMappings, populationDict);
+                map = new suburbMap("#mapContainer", 1, cityOutlines, sensorLocations, sensorMappings, populationDict, tileColor = mapColor);
                 // init line chart
                 sensorStatChart = new lineChart("#lineChartContainer", 0.75);
 
                 // set center sensor as default selection
                 onSensorSelect(sensorLocations[30]);
 
+                // add net sensor event listener
+                d3.select("body")
+                    .on("keydown", () =>{
+                        const code = d3.event.keyCode;
+                        if(code === keyCodes.space){
+                            const currentIndex = sensorLocations.indexOf(selectedSensor);
+                            onSensorSelect(sensorLocations[nextSensor(currentIndex, sensorLocations)]);
+                        }
+                    });
+
                 d3.select("#mapToggle").property("checked", false);
 
                 d3.select("#hourInput")
                     .property("value", currentHour)
                     .on("input", onHourInputChange);
+
+                d3.select("#hourInput")
+                    .property("value", currentHour)
+                    .on("click",() =>{
+                        if(animationIsRunning){
+                            onAnimationClick();
+                        }
+                    });
 
                 updateAllUIElements(currentDate, currentHour, selectedSensor, sensorReadings, sensorMappings, totalObservationsPerHour);
 
@@ -115,12 +137,19 @@
 
                 d3.select("#animationBtn").on("click", onAnimationClick);
 
-                d3.select("#countsLegend").on("mouseenter", d => d3.selectAll(".line.counts").classed("highlighted", true));
-                d3.select("#countsLegend").on("mouseleave", d => d3.selectAll(".line.counts").classed("highlighted", false));
-                d3.select("#aveLegend").on("mouseenter", d => d3.selectAll(".line.ave").classed("highlighted", true));
-                d3.select("#aveLegend").on("mouseleave", d => d3.selectAll(".line.ave").classed("highlighted", false));
-                d3.select("#ave52Legend").on("mouseenter", d => d3.selectAll(".line.ave52").classed("highlighted", true));
-                d3.select("#ave52Legend").on("mouseleave", d => d3.selectAll(".line.ave52").classed("highlighted", false));
+                const lineLegends = ["counts", "ave", "ave52"];
+                lineLegends.forEach(name => {
+                    const selector = "#" + name + "Legend";
+                    const lineClass = ".line." +name;
+                    d3.select(selector).on("mouseenter", d => {
+                        d3.selectAll(".line.counts").classed("selected", false);
+                        d3.selectAll(lineClass).classed("selected", true)
+                    });
+                    d3.select(selector).on("mouseleave", d => {
+                        d3.selectAll(lineClass).classed("selected", false);
+                        d3.selectAll(".line.counts").classed("selected", true);
+                    });
+                });
 
                 d3.select("#mapToggle").on("change", onMapToggle);
 
@@ -128,6 +157,10 @@
                 d3.select("body").classed("overflow-hidden", false).select("#page-overlay").remove();
             }
         });
+
+    function nextSensor(current, list){
+        return current === list.length - 1 ? 0 : current + 1;
+    }
 
     function rowConverter(d) {
         return {
@@ -147,36 +180,58 @@
     }
 
     function updateSensorDetails(sensor, readings, currentHour) {
+        const errorText = "N/A";
         d3.select("#sensorDescription").text(sensor.description);
         d3.select("#sensorId").text(sensor.id);
         d3.select("#sensorName").text(sensor.name);
-        d3.select("#sensorYearInstalled").text(sensor.yearInstalled);
+        d3.select("#sensorYearInstalled").text((sensor.yearInstalled).replace(/-/g, '/'));
         if(readings){
-            d3.select("#countCurrentHour").text(+readings.counts[currentHour] >= 0 ? readings.counts[currentHour] : "no data");
-            d3.select("#count").text(+readings.counts[currentHour] >= 0 ? readings.counts[currentHour] : "no data");
-            d3.select("#ave").text(+readings.ave[currentHour] >= 0 ? readings.ave[currentHour] : "no data");
-            d3.select("#ave52").text(+readings.ave52[currentHour] >= 0 ? readings.ave52[currentHour] : "no data");
+            d3.select("#statusLight").classed("online", +readings.counts[currentHour] >= 0);
+            d3.select("#countCurrentHour").text(+readings.counts[currentHour] >= 0 ? readings.counts[currentHour] : errorText);
+            d3.select("#count").text(+readings.counts[currentHour] >= 0 ? readings.counts[currentHour] : errorText);
+            d3.select("#ave").text(+readings.ave[currentHour] >= 0 ? readings.ave[currentHour] : errorText);
+            d3.select("#ave52").text(+readings.ave52[currentHour] >= 0 ? readings.ave52[currentHour] : errorText);
         } else{
-            d3.select("#countCurrentHour").text("no data");
-            d3.select("#count").text("no data");
-            d3.select("#ave").text("no data");
-            d3.select("#ave52").text("no data");
+            const errorText = "N/A";
+            d3.select("#countCurrentHour").text(errorText);
+            d3.select("#count").text(errorText);
+            d3.select("#ave").text(errorText);
+            d3.select("#ave52").text(errorText);
         }
     }
 
     function onSuburbSelect(d){
-        let text = d.properties.name;
-        let suburb = populationDict[d.properties.cartodb_id];
-        if(suburb){
-            text +=  ", total population: " + suburb.total +
-                ", " + ((suburb.total/totalPopulationCount)*100).toFixed(2) + "%" +
-                " population within the visible area"
-        } else{
-            text += ", total population: no data"
+        let currentSuburb = d.properties.name;
+        let name = "No Suburb Selected";
+        let population = "N/A";
+        let percentage = "N/A";
+        const isChecked = d3.select("#mapToggle").property("checked");
+        d3.selectAll(".suburb").classed("active", false);
+        if(!isChecked){
+            d3.selectAll(".suburb").style("fill", mapColor);
         }
-        d3.select("#suburbSelection").text(text);
-        d3.selectAll(".suburb").classed("highlighted", false);
-        d3.select(this).classed("highlighted", true);
+
+        if (oldSuburb !== currentSuburb){
+            d3.select(this).classed("active", true);
+            if(!isChecked){
+                d3.select(this).style("fill", "#eeeeee");
+            }
+            oldSuburb = currentSuburb;
+            name = currentSuburb;
+        }else{
+            oldSuburb = "";
+        }
+
+        let data = populationDict[d.properties.cartodb_id];
+        if(data && oldSuburb){
+            population =  data.total ;
+            percentage = ((data.total/totalPopulationCount)*100).toFixed(2) + "%";
+        }
+
+        d3.select("#suburbName").text(name);
+        d3.select("#suburbPopulation").text(population);
+        d3.select("#suburbPercent").text(percentage);
+
     }
 
     function onSensorSelect(sensor) {
@@ -303,7 +358,9 @@
         if (!animationIsRunning) {
             animationIsRunning = true;
             setPlayButtonSymbol(animationSymbols.PAUSE);
-            currentHour = 0;
+            const sliderValue = parseInt(document.getElementById("hourInput").value);
+            const sliderMax = parseInt(document.getElementById("hourInput").max);
+            currentHour = sliderValue < sliderMax ? sliderValue : 0;
             setHourInput(currentHour);
             animationInterval = setInterval(() => {
                 setHourInput(currentHour);
@@ -356,9 +413,9 @@
             this.yScale = d3.scaleLinear()
                 .range([this.height, 0]);
 
-            this.xAxis = d3.axisBottom().scale(this.xScale).ticks(6).tickFormat(d3.timeFormat("%I %p"));
+            this.xAxis = d3.axisBottom().scale(this.xScale).ticks(4).tickFormat(d3.timeFormat("%I %p"));
 
-            this.yAxis = d3.axisLeft().scale(this.yScale);
+            this.yAxis = d3.axisLeft().scale(this.yScale).ticks(6) ;
 
             this.line = d3.line()
                 .defined(d => +d >= 0)
@@ -372,7 +429,7 @@
                 .attr("class", "line ave52");
 
             this.focus.append("path")
-                .attr("class", "line counts");
+                .attr("class", "line counts selected");
 
             this.focus.append("g")
                 .attr("class", "x axis")
@@ -417,11 +474,13 @@
         }
     }
     class suburbMap{
-        constructor(containerId = "body", ratio = 1, geoData, sensorLocations, mappings, populationDict) {
+        constructor(containerId = "body", ratio = 1,geoData, sensorLocations, mappings, populationDict, tileColor = "steelblue") {
+            this.tileColor = tileColor;
             this.mappings = mappings;
             this.sensorLocations = sensorLocations;
             this.populationDict = populationDict;
             this.geoData = geoData;
+            this.sensorSize = 4;
             const container = d3.select(containerId);
             //Create SVG element
             this.svg = d3.select(containerId)
@@ -439,7 +498,7 @@
                 .center(this.centerCoords)
                 .scale(this.zoomFactor);
 
-            this.colorScale = d3.interpolateBlues;
+            this.colorScale = d3.interpolateGreys;
             this.linearColorScale = d3.scaleLinear()
                 .domain([4, 41])
                 .range([0.5, 1]);
@@ -453,7 +512,7 @@
                 .append("path")
                 .attr("d", this.path)
                 .attr("class", "suburb")
-                .style("fill", "steelblue");
+                .style("fill", this.tileColor);
 
             this.suburbs.on("click", onSuburbSelect);
 
@@ -463,19 +522,28 @@
                 .attr("id",d => d.name)
                 .attr("cx", d => this.projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => this.projection([d.longitude, d.latitude])[1])
-                .attr("r", 3)
+                .attr("r", this.sensorSize)
                 .attr("class", "sensor-volume");
 
-            this.sensorVolume.on("click", onSensorSelect);
+            this.clickDummies = this.svg.append("g").selectAll("circle")
+                .data(this.sensorLocations).enter()
+                .append("circle")
+                .attr("id",d => d.name)
+                .attr("cx", d => this.projection([d.longitude, d.latitude])[0])
+                .attr("cy", d => this.projection([d.longitude, d.latitude])[1])
+                .attr("r", 20)
+                .attr("class", "click-dummy");
+
+            this.clickDummies.on("click", onSensorSelect);
 
 
             this.sensors = this.svg.append("g").selectAll("circle")
-                .data(sensorLocations).enter()
+                .data(this.sensorLocations).enter()
                 .append("circle")
                 .attr("id",d => "sensor_" + d.id)
                 .attr("cx", d => this.projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => this.projection([d.longitude, d.latitude])[1])
-                .attr("r", 3)
+                .attr("r", this.sensorSize)
                 .attr("class", "sensor")
                 .classed("inactive", d => !this.mappings[d.id].some(n => sensorReadings[n]));
 
@@ -484,21 +552,24 @@
         }
 
         updateBackgroundColor(mode){
+            const self = this;
             d3.selectAll(".suburb")
                 .transition()
                 .duration(500)
-                .style("fill", (d) => {
-                    let color = "grey";
+                .style("fill", function(d){
+                    let color = "white";
                     switch (mode){
                         case "multi":
-                            let suburb = this.populationDict[d.properties.cartodb_id];
+                            let suburb = self.populationDict[d.properties.cartodb_id];
                             if(suburb){
                                 let value = (suburb.total/totalPopulationCount)*100;
-                                color = value >= 4 ? this.colorScale(this.linearColorScale(value)) : "white";
+                                color = value >= 4 ? self.colorScale(self.linearColorScale(value)) : "cccccc";
                             }
                             break;
                         default:
-                            color = "steelblue"
+                            const elem = d3.select(this);
+                            const isActive = elem.classed("active");
+                            color =  isActive ? "#cccccc" : tileColor;
                     }
                     return color;
                 });
@@ -522,15 +593,18 @@
                     const hasReading = sensorData.counts[currentHour] >= 0;
                     const total = hasReading >= 0 ? sensorData.counts[currentHour] : 0;
                     const result = (total/hourlyTotal[currentHour])*100;
-                    return result >=0 ? result *5 : 3;
+                    return result >=0 ? result * 10 : this.sensorSize;
                 }else{
-                    return 3;
+                    return this.sensorSize;
                 }
             });
         }
     }
 
     $('[data-toggle="popover"]').popover();
+
+    $('[data-toggle="tooltip"]').tooltip();
+
 
     const picker = $('[data-toggle="datepicker"]').datepicker({
         autoHide: true,
@@ -552,22 +626,5 @@
         }
 
     });
-
-    d3.selectAll(".date-link").on("click", goToDate);
-
-    function goToDate() {
-        const date = d3.select(this);
-        const day = date.attr("data-day");
-        const month = date.attr("data-month");
-        const year = date.attr("data-year");
-        const newDate = new Date(currentDate);
-        newDate.setDate(day);
-        newDate.setMonth(month);
-        newDate.setFullYear(year);
-        if(formatDate(newDate) !== formatDate(currentDate)){
-            currentDate = newDate;
-            loadNewReadings(currentDate, currentHour, sensorMappings);
-        }
-    }
 
 })();

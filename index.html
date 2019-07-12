@@ -1,58 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Melbourne Pedestrian Sensors</title>
     <link rel="stylesheet" href="lib/bootstrap-4.1.0-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="toggle.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="lib/datepicker/datepicker.min.css">
-    <link rel="stylesheet" href="lib/material-design-icons/css/material-icons.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="toggle.css">
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm">
+<nav class="navbar navbar-light bg-white fixed-top navbar-expand nav-shadow no-user-select">
     <a class="navbar-brand" href="#">
-        <img src="logo-light.png" width="30" height="30" alt="">
-        Melbourne Pedestrian Sensors
+        <img src="logo.svg" width="30" height="30" alt="">
+        <span class="d-none d-sm-inline">Melbourne Pedestrian Sensors</span>
     </a>
-    <button class="navbar-toggler no-outline" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarToggler">
-        <ul class="navbar-nav ml-auto">
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto align-items-center">
             <li class="nav-item">
                 <a tabindex="0"
-                   class="nav-link pointer"
-                   data-placement="bottom"
-                   data-toggle="popover"
-                   data-container="body"
-                   data-animation="true"
-                   data-template='<div class="popover bg-dark" role="tooltip"><div class="arrow"></div><h3 class="popover-header bg-dark text-light"></h3><div class="popover-body text-light"></div></div>'
-                   data-content="This visualization show the hourly readings of Melbourne's pedestrian sensor network in the inner city">
+                    class="nav-link pointer"
+                    data-placement="bottom"
+                    data-toggle="popover"
+                    data-container="body"
+                    data-animation="true"
+                    data-html="true"
+                    data-template='<div class="popover layer-shadow border-0" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>'
+                    data-content="<p>This visualization shows the hourly readings of Melbourne's pedestrian sensor network in the inner city</p><p>Usage</p><ul><li>Click a suburb on the map for additional statistics</li><li>Click again to deselect the suburb</li><li>Sensors can be changed by hitting the space bar</li><li>Click show more for additional options</li><li>Hover the chart legend for highlighting</li></ul> ">
                     about
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://github.com/Sn0oze/Melbourne-Pedestrian-Sensors" target="_blank">
-                    <i class="fab fa-github mdi-lg"></i>
+                    <i class="fab fa-github"></i>
                 </a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="mdi mdi-settings mdi-lg"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right bg-dark px-2" aria-labelledby="navbarDropdownMenuLink" onclick=" event.stopPropagation();">
-                    <span class="text-light">Change theme</span>
-                    <span class="d-flex align-items-center justify-content-between mt-2">
-                        <span class="switch-label text-light"><i class="mdi mdi-brightness-4 mdi-lg"></i></span>
-                         <label class="switch">
-                            <input type="checkbox" id="themeToggle">
-                            <span class="slider round"></span>
-                         </label>
-                    </span>
-                </div>
             </li>
         </ul>
     </div>
@@ -60,39 +44,59 @@
 <div class="overlay" id="page-overlay">
     <div class="overlay-item">
         <h1 class="no-user-select">Preparing Visualisations</h1>
-        <span class="spinner"></span>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="233.97357932082966 200.0377748268612 200 260" width="200" height="260">
+            <path class="pulse circle" d="M395.42 257.41C398.22 291.7 372.47 321.74 337.95 324.47C303.44 327.19 273.14 301.57 270.34 267.29C267.55 233.01 293.3 202.96 327.81 200.24C362.33 197.51 392.63 223.13 395.42 257.41Z" id="h540Hdm6nw"></path>
+            <path class="pulse circle" style="animation-delay: 50ms" d="M344.23 330.59C346.69 360.75 324.03 387.19 293.65 389.59C263.28 391.99 236.62 369.44 234.16 339.28C231.69 309.11 254.36 282.67 284.73 280.27C315.1 277.87 341.76 300.42 344.23 330.59Z" id="bY9eSi1H1"></path>
+            <path class="pulse circle" style="animation-delay: 100ms" d="M391.39 384.75C393.29 408.06 375.78 428.49 352.31 430.35C328.84 432.2 308.24 414.78 306.34 391.47C304.43 368.15 321.94 347.72 345.41 345.87C368.89 344.02 389.49 361.44 391.39 384.75Z" id="e6RhQOVfQ"></path>
+            <path class="pulse circle" style="animation-delay: 150ms" d="M259.74 417.03C260.3 423.89 255.15 429.9 248.25 430.44C241.34 430.99 235.28 425.86 234.72 419.01C234.16 412.15 239.32 406.14 246.22 405.6C253.12 405.05 259.18 410.18 259.74 417.03Z" id="e4coiFR1eW"></path>
+            <path class="pulse circle" style="animation-delay: 200ms" d="M259.74 211.51C260.3 218.37 255.15 224.38 248.25 224.92C241.34 225.47 235.28 220.34 234.72 213.49C234.16 206.63 239.32 200.62 246.22 200.08C253.12 199.53 259.18 204.66 259.74 211.51Z" id="d2G5Mfyp5"></path>
+            <path class="pulse circle" style="animation-delay: 250ms" d="M395.59 329.67C396.15 336.52 391 342.53 384.1 343.08C377.19 343.62 371.13 338.5 370.57 331.64C370.01 324.79 375.16 318.78 382.07 318.23C388.97 317.69 395.03 322.81 395.59 329.67Z" id="a4WDCMHOY"></path>
+        </svg>
     </div>
 </div>
-<div class="container-fluid position-relative" style="padding-top: 59px">
+<div class="container-fluid position-relative" style="padding-top: 70px">
     <div class="overlay loading hide" id="loadingOverlay">
         <div class="overlay-item">
-            <span class="spinner"></span>
+            <h1>Collecting Data</h1>
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="233.97357932082966 200.0377748268612 200 260" width="200" height="260">
+                <path class="pulse circle" d="M395.42 257.41C398.22 291.7 372.47 321.74 337.95 324.47C303.44 327.19 273.14 301.57 270.34 267.29C267.55 233.01 293.3 202.96 327.81 200.24C362.33 197.51 392.63 223.13 395.42 257.41Z" id="h540Hdm6nw"></path>
+                <path class="pulse circle" style="animation-delay: 50ms" d="M344.23 330.59C346.69 360.75 324.03 387.19 293.65 389.59C263.28 391.99 236.62 369.44 234.16 339.28C231.69 309.11 254.36 282.67 284.73 280.27C315.1 277.87 341.76 300.42 344.23 330.59Z" id="bY9eSi1H1"></path>
+                <path class="pulse circle" style="animation-delay: 100ms" d="M391.39 384.75C393.29 408.06 375.78 428.49 352.31 430.35C328.84 432.2 308.24 414.78 306.34 391.47C304.43 368.15 321.94 347.72 345.41 345.87C368.89 344.02 389.49 361.44 391.39 384.75Z" id="e6RhQOVfQ"></path>
+                <path class="pulse circle" style="animation-delay: 150ms" d="M259.74 417.03C260.3 423.89 255.15 429.9 248.25 430.44C241.34 430.99 235.28 425.86 234.72 419.01C234.16 412.15 239.32 406.14 246.22 405.6C253.12 405.05 259.18 410.18 259.74 417.03Z" id="e4coiFR1eW"></path>
+                <path class="pulse circle" style="animation-delay: 200ms" d="M259.74 211.51C260.3 218.37 255.15 224.38 248.25 224.92C241.34 225.47 235.28 220.34 234.72 213.49C234.16 206.63 239.32 200.62 246.22 200.08C253.12 199.53 259.18 204.66 259.74 211.51Z" id="d2G5Mfyp5"></path>
+                <path class="pulse circle" style="animation-delay: 250ms" d="M395.59 329.67C396.15 336.52 391 342.53 384.1 343.08C377.19 343.62 371.13 338.5 370.57 331.64C370.01 324.79 375.16 318.78 382.07 318.23C388.97 317.69 395.03 322.81 395.59 329.67Z" id="a4WDCMHOY"></path>
+            </svg>
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-8 col-md-6 text-center pl-0">
+        <div class="col-lg-8 col-md-6 text-center">
             <div id="mapContainer" class="position-relative">
-                <div class="ui-widget position-absolute">
+                <div class="ui-widget position-absolute layer-shadow">
                     <div class="d-flex align-content-center">
                         <input id="selectedDate" class="mr-auto datepicker-input" data-toggle="datepicker" readonly>
                         <div class="mr-1">
-                            <button id="calendarPopover" class="icon-btn">
-                                <i class="far fa-calendar-alt"></i>
-                            </button>
+                            <button id="calendarPopover" type="button" class="btn icon-btn btn-circle ripple"><i class="fa fa-calendar-alt"></i></button>
                         </div>
-                        <span id="backBtn" class="pointer">&lt;</span>&nbsp;<span id="nextBtn" class="pointer">&gt;</span>
+                        <button id="backBtn" type="button" class="btn icon-btn btn-circle ripple mx-1"><i class="fa fa-chevron-left"></i></button>
+                        <button id="nextBtn" type="button" class="btn icon-btn btn-circle ripple"><i class="fa fa-chevron-right"></i></button>
+
                     </div>
-                    <div class="text-left"><span id="selectedHour">None</span></div>
-                    <div class="d-flex align-items-center mt-2">
-                        <div class="play pointer mr-2" id="animationBtn"></div>
+                    <p class="text-left"><span class="text-muted" id="selectedHour">None</span></p>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn icon-btn btn-circle ripple mr-2">
+                            <span class="play" id="animationBtn"></span>
+                        </button>
                         <input class="range-slider flex-grow-1" id="hourInput" type="range" min="0" max="23" step="1">
                     </div>
-                    <div class="text-left">
-                        <button class="icon-btn collapse-toggle px-0 collapsed text-left" type="button" data-toggle="collapse" data-target="#widgetCollapse" aria-expanded="false" aria-controls="widgetCollapse">
-                            show
-                        </button>
-                    </div>
                     <div class="collapse" id="widgetCollapse">
+                        <div class="d-flex align-items-center justify-content-between mt-2">
+                            <span class="switch-label">Toggle choropleth</span>
+                            <label class="switch">
+                                <input type="checkbox" id="mapToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="text-left">Legend</div>
                         <div class="d-flex align-items-center">
                             <svg width="24px" height="24px">
                                 <circle r="5" cx="12" cy="12" class="sensor-legend"></circle>
@@ -116,28 +120,50 @@
                                 <circle r="10" cx="12" cy="12" class="volume-legend"></circle>
                                 <circle r="2" cx="12" cy="12" class="sensor-legend"></circle>
                             </svg>
-                            <span>Sensor volume in relation to the hourly total</span>
+                            <span>Pedestrians, relative to hourly total</span>
                         </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="switch-label">Show choropleth</span>
-                            <label class="switch">
-                                <input type="checkbox" id="mapToggle">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
+                    </div>
+                    <div class="text-left mt-2">
+                        <button class="text-btn collapse-toggle px-0 collapsed text-left text-muted" type="button" data-toggle="collapse" data-target="#widgetCollapse" aria-expanded="false" aria-controls="widgetCollapse">
+                            show
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-4 col-md-6">
-            <h4 class="mt-2">Suburb</h4>
-            <p id="suburbSelection">None - click suburbs to se more</p>
-            <h4>Sensor at <span id="sensorDescription">None</span></h4>
-            <p>ID: <span id="sensorId">None</span>, Name: <span id="sensorName">None</span>, installed in <span id="sensorYearInstalled">none</span></p>
+            <h4 class="mt-2 no-user-select"><span id="suburbName">No Suburb Selected</span></h4>
+            <div class="no-user-select">
+                <span>Population of </span>
+                <span class="stats" id="suburbPopulation">N/A</span>
+            </div>
+            <p class="no-user-select">
+                <span class="stats" id="suburbPercent">N/A</span>
+                <span> of the total population in the visible area</span>
+            </p>
+            <h4 class="no-user-select">
+                <span data-toggle="tooltip" title="Sensor Location">
+                    <i class="fa fa-map-marker-alt text-muted"></i>
+                </span>
+                <span class="ml-1" id="sensorDescription">None</span>
+            </h4>
             <div class="d-flex align-items-center">
-                <i class="fa fa-users fa-2x"></i>
-                &nbsp;<span id="countCurrentHour">0</span>
-                &nbsp;pedestrians counted this hour
+                <span data-toggle="tooltip" title="Sensor Status">
+                    <i  class="fa fa-wifi text-muted rotate-90"></i>
+                </span>
+                <div id="statusLight" class="status-light ml-1"></div>
+            </div>
+            <div class="no-user-select">
+                <span>Sensor </span>
+                <span class="stats" id="sensorName">None</span>
+                <span>was installed in</span>
+                <span id="sensorYearInstalled">none</span>
+                <span class="d-none" id="sensorId">None</span>
+            </div>
+            <div class="no-user-select">
+                <span>A total of </span>
+                <span class="stats" id="countCurrentHour">0</span>
+                <span> pedestrians counted this hour</span>
             </div>
             <div class="mt-2" id="lineChartContainer"></div>
             <div class="no-user-select">
@@ -145,20 +171,23 @@
                     <svg width="24px" height="24px">
                         <line class="counts-legend" x1="1" x2="18" y1="18" y2="18"></line>
                     </svg>
-                    Hourly total:
-                    <span class="float-right" id="count">0</span></div>
+                    <span>Hourly total</span>
+                    <span class="float-right font-weight-bold" id="count">0</span>
+                </div>
                 <div id="aveLegend">
                     <svg width="24px" height="24px">
                         <line class="ave-legend" x1="1" x2="18" y1="18" y2="18"></line>
                     </svg>
-                    4 week average:
-                    <span class="float-right" id="ave">0</span></div>
+                    <span>4 week average</span>
+                    <span class="float-right" id="ave">0</span>
+                </div>
                 <div id="ave52Legend">
                     <svg width="24px" height="24px">
                         <line class="ave52-legend" x1="1" x2="18" y1="18" y2="18"></line>
                     </svg>
-                    52 week average:
-                    <span class="float-right" id="ave52">0</span></div>
+                    <span>52 week average</span>
+                    <span class="float-right" id="ave52">0</span>
+                </div>
             </div>
         </div>
     </div>
