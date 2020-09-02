@@ -74,7 +74,7 @@
     //Load in GeoJSON data
     const sensorLocationsURL = "http://www.pedestrian.melbourne.vic.gov.au/data/sensors.csv";
     const proxyURL = "https://mps-proxy.herokuapp.com/";
-    const sensorDataURL = "https://compedapi.herokuapp.com/api/bydate/";
+    const sensorDataURL = "https://compedv2api.herokuapp.com/api/bydate/";
 
     const mapColor = "white";
     const keyCodes = {"space":32};
